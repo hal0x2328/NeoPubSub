@@ -1,19 +1,19 @@
 using System;
 using System.IO;
-using ServiceStack.Redis;
+using StackExchange.Redis;
 
 namespace Neo.Plugins
 {
     public class NeoPubSub : Plugin, ILogPlugin
     {
-        private readonly RedisClient connection;
+        private readonly ConnectionMultiplexer connection;
 
         public override string Name => "NeoPubSub";
 
         public NeoPubSub()
         {
-            Console.WriteLine($"Connecting to NeoPubSub server at {Settings.Default.Host}:{Settings.Default.Port}");
-            this.connection = new RedisClient($"{Settings.Default.Host}:{Settings.Default.Port}");
+            Console.WriteLine($"Connecting to PubSub server at {Settings.Default.RedisHost}:{Settings.Default.RedisPort}");
+            this.connection = ConnectionMultiplexer.Connect($"{Settings.Default.RedisHost}:{Settings.Default.RedisPort}");
             if (this.connection == null) {
                 Console.WriteLine($"Connection failed!");
             } else {
@@ -23,14 +23,16 @@ namespace Neo.Plugins
             }
         }
 
-        public void Log(string source, LogLevel level, string message)
+        void ILogPlugin.Log(string source, LogLevel level, string message)
         {
-            connection.PublishMessage(source, message);
+            connection.GetSubscriber().Publish(source, message);
         }
 
         public override void Configure()
         {
+            Console.WriteLine("Loading configuration for NeoPubSub plugin...");
             Settings.Load(GetConfiguration());
         }
+
     }
 }
