@@ -1,6 +1,10 @@
 ﻿{
   "PluginConfiguration": {
-    "Host": "127.0.0.1",
-    "Port": "6379"
+    "RedisHost": "127.0.0.1",
+    "RedisPort": "6379"
+    "WatchContracts": [
+      "0x91b83e96f2a7c4fdf0c1688441ec61986c7cae26",
+      "0x0947ff380d2022110b1e53bbce5eee6a6a701c4f"
+    ]
   }
 }
